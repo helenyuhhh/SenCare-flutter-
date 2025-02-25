@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sencare/loginScreen.dart';
+import 'package:sencare/patientListScreen.dart';
 // this is the login screen for the app
 class LoginScreen extends StatefulWidget{
   @override
@@ -16,6 +18,9 @@ class _LoginState extends State<LoginScreen> {
     if ( _usernameController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
       if ((_usernameController.text == 'Admin' && _passwordController.text == 'admin')){
         validAuth = true;
+        Navigator.push(
+          context, 
+        MaterialPageRoute(builder: (context) => PatientListScreen(_usernameController.text)));
       }
       else {
         validAuth = false;
