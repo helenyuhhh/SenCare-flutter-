@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+// define enum for filter
+enum PatientFilter {critical, normal, all}
+
 class PatientListScreen extends StatefulWidget{
   // variable to receive the passed username
   final String receiveUsername;
   // constructor
-  const PatientListScreen(this.receiveUsername);
+  const PatientListScreen(this.receiveUsername, {super.key});
   
   @override
   State<StatefulWidget> createState() {
@@ -13,7 +16,10 @@ class PatientListScreen extends StatefulWidget{
 }
 
 class _PatientListState extends State<PatientListScreen> {
-  // variable to receive the username from login page
+  // define a search bar controller
+  SearchController _searchBarController = SearchController();
+  // a filter set for filter the oatienrs with conditions
+  Set<PatientFilter> filters = <PatientFilter>{};
   
   @override
   Widget build(BuildContext context) {
@@ -22,13 +28,63 @@ class _PatientListState extends State<PatientListScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          
           children: [
             // don't forget the widget!
-            Text('Hello ${widget.receiveUsername}!',
-            style: const TextStyle(fontSize: 24, fontWeight:FontWeight.bold),)
+             Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                'Hello ${widget.receiveUsername}!',
+                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                 ),
+             ),
+            // a search bar
+            SizedBox(height: 15,),
+            SearchBar(
+              controller: _searchBarController,
+              padding: const WidgetStatePropertyAll<EdgeInsets>(
+                EdgeInsets.symmetric(horizontal: 16.0),
+              ),
+              onTap: (){
+                // search function
+              },
+              leading: const Icon(Icons.search),
+
+            ),
+            const SizedBox(height: 10.0,),
+            // filter to filter the patients
+            Wrap(
+              spacing: 10.0,
+              children: 
+              PatientFilter.values.map((PatientFilter patient){
+              return FilterChip(
+                label: Text(patient.name),
+                selected: filters.contains(patient),
+                onSelected: (bool selected){
+                  setState(() {
+                    if (selected){
+                      filters.add(patient);
+                    }
+                    else {
+                      filters.remove(patient);
+                    }
+                  });
+                  // filter function
+                });
+
+            }).toList(),
+            ),
+            const SizedBox(height: 10.0,),
+            Text('Looking for ${filters.map((PatientFilter p)=> p.name).join(', ')}')
+            
+            // patient list
+              // swipeable, to edit and delete(should have a alert dialog)
+            // button to add button
           ],
-        ),),
+        ),
+        
+        ),
     );
   }
 }
