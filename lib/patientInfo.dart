@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sencare/editpatient.dart';
+import 'package:sencare/testsListScreen.dart';
 
 // this should be stateless widget since it's just displaying, not changing
 // a function to receive the patient id
@@ -11,9 +12,7 @@ class PatientInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Patient Info'),
-      ),
+      appBar: AppBar(title: const Text('Patient Info'),),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -151,7 +150,10 @@ class PatientInfo extends StatelessWidget {
             SizedBox(
               height: 10,
             ),
-            ElevatedButton(onPressed: () {}, child: const Text('Texts'))
+            ElevatedButton(onPressed: () {
+              Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => TextListScreen()));
+            }, child: const Text('Tests'))
           ],
         ),
       ),

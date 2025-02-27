@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
     as picker;
+import 'package:sencare/patientListScreen.dart';
 
 enum Gender { male, female }
 
@@ -311,7 +312,11 @@ class _AddPatientState extends State<AddPatient> {
               // add patient button
               Align(
                   alignment: Alignment.bottomRight,
-                  child: IconButton(onPressed: (){}, 
+                  child: IconButton(onPressed: (){
+                    // 
+                    Navigator.pop(context,
+                      MaterialPageRoute(builder: (context) => PatientListScreen("")));
+                  }, 
                   icon: Icon(Icons.group_add, size: 72))
                 ),
 
