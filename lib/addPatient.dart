@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
+    as picker;
 
 enum Gender { male, female }
-enum Condition {normal, critical}
+
+enum Condition { normal, critical }
 
 class AddPatient extends StatefulWidget {
   @override
@@ -26,6 +29,7 @@ class _AddPatientState extends State<AddPatient> {
   // radio button for gender and condition
   Gender? _gender = Gender.male;
   Condition? _condition = Condition.normal;
+  String dateTimeStr = "";
   String getGenderString(Gender? gender) {
     switch (gender) {
       case Gender.male:
@@ -36,6 +40,7 @@ class _AddPatientState extends State<AddPatient> {
         return "Not selected";
     }
   }
+
   String getConditionString(Condition? condition) {
     switch (condition) {
       case Condition.normal:
@@ -271,7 +276,45 @@ class _AddPatientState extends State<AddPatient> {
                 height: 5,
               ),
               // for date
-              
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Date: ",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        picker.DatePicker.showDateTimePicker(context,
+                            showTitleActions: true,
+                            minTime: DateTime(2010, 1, 1, 00, 00),
+                            maxTime: DateTime(2100, 12, 31, 23, 59),
+                            onChanged: (date) {
+                          print(
+                              'change $date in time zone ${date.timeZoneOffset.inHours}');
+                        }, onConfirm: (date) {
+                          setState(() {
+                            dateTimeStr = date.toString();
+                          });
+                          
+                          print('confirm $date');
+                        }, locale: picker.LocaleType.en);
+                      },
+                      child: Text(
+                        'Pick time',
+                        style: TextStyle(color: Colors.blue),
+                      )),
+                ],
+              ),
+              // test date and time string
+              Text('Choosen date: $dateTimeStr'),
+              // add patient button
+              Align(
+                  alignment: Alignment.bottomRight,
+                  child: IconButton(onPressed: (){}, 
+                  icon: Icon(Icons.group_add, size: 72))
+                ),
+
             ],
           )),
     );
