@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:sencare/addPatient.dart';
-// import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart' as picker;
-
+import 'package:sencare/patientInfo.dart';
 // define enum for filter
-enum PatientFilter {critical, normal}
+enum PatientFilter { critical, normal }
 
-class PatientListScreen extends StatefulWidget{
+class PatientListScreen extends StatefulWidget {
   // variable to receive the passed username
   final String receiveUsername;
   // constructor
   const PatientListScreen(this.receiveUsername, {super.key});
-  
+
   @override
   State<StatefulWidget> createState() {
     return _PatientListState();
@@ -30,70 +29,84 @@ class _PatientListState extends State<PatientListScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          
           children: [
             // don't forget the widget!
-             Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
                 'Hello ${widget.receiveUsername}!',
-                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                 ),
-             ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
             // a search bar
-            SizedBox(height: 15,),
+            SizedBox(
+              height: 15,
+            ),
             SearchBar(
               controller: _searchBarController,
               padding: const WidgetStatePropertyAll<EdgeInsets>(
                 EdgeInsets.symmetric(horizontal: 16.0),
               ),
-              onTap: (){
+              onTap: () {
                 // search function
               },
               leading: const Icon(Icons.search),
-
             ),
-            const SizedBox(height: 10.0,),
+            const SizedBox(
+              height: 10.0,
+            ),
             // filter to filter the patients
             Wrap(
               spacing: 10.0,
-              children: 
-              PatientFilter.values.map((PatientFilter patient){
-              return FilterChip(
-                label: Text(patient.name),
-                selected: filters.contains(patient),
-                onSelected: (bool selected){
-                  setState(() {
-                    if (selected){
-                      filters.add(patient);
-                    }
-                    else {
-                      filters.remove(patient);
-                    }
-                  });
-                  // filter function
-                });
-
-            }).toList(),
+              children: PatientFilter.values.map((PatientFilter patient) {
+                return FilterChip(
+                    label: Text(patient.name),
+                    selected: filters.contains(patient),
+                    onSelected: (bool selected) {
+                      setState(() {
+                        if (selected) {
+                          filters.add(patient);
+                        } else {
+                          filters.remove(patient);
+                        }
+                      });
+                      // filter function
+                    });
+              }).toList(),
             ),
-            const SizedBox(height: 10.0,),
-            Text('Looking for ${filters.map((PatientFilter p)=> p.name).join(', ')}'),
+            const SizedBox(
+              height: 10.0,
+            ),
+            Text(
+                'Looking for ${filters.map((PatientFilter p) => p.name).join(', ')}'),
             // patient list
-              // swipeable, to edit and delete(should have a alert dialog)
+            // swipeable, to edit and delete(should have a alert dialog)
+            Expanded(
+                child: ListView.builder(
+              itemCount: 20,
+              itemBuilder: (_, int index) {
+                return ListTile(
+                  onTap: () {
+                    Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => PatientInfo()));
+                    
+                  },
+                  title: Text('Patient $index'),
+                );
+              },
+            )),
+
             // button to add button
-            ElevatedButton(onPressed: (){
-              // press to nagivate to addPatient
-              Navigator.push(context, 
-             MaterialPageRoute(builder: (context) => 
-             AddPatient()));
-
-            }, 
-            child: const Text("Add Patient"))
-
+            ElevatedButton(
+                onPressed: () {
+                  // press to nagivate to addPatient
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => AddPatient()));
+                },
+                child: const Text("Add Patient"))
           ],
         ),
-        
-        ),
+      ),
     );
   }
 }
