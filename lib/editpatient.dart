@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '';
+import 'package:sencare/patientInfo.dart';
 
 class EditPatient extends StatefulWidget {
   @override
@@ -101,9 +101,8 @@ class _EditPatient extends State<EditPatient> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  //   Navigator.push(context,
-                  //  MaterialPageRoute(builder: (context) =>
-                  //  AddPatient()))
+                  Navigator.pop(context,
+                      MaterialPageRoute(builder: (context) => PatientInfo()));
                 },
                 child: const Text("Save"))
           ],

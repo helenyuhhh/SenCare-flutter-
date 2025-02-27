@@ -82,11 +82,12 @@ class _PatientListState extends State<PatientListScreen> {
             // patient list
             // swipeable, to edit and delete(should have a alert dialog)
             Expanded(
-                child: ListView.builder(
+              child: ListView.builder(
               itemCount: 20,
               itemBuilder: (_, int index) {
                 return ListTile(
                   onTap: () {
+                    // later this will pass the id to the next screen
                     Navigator.push(context,
                       MaterialPageRoute(builder: (context) => PatientInfo()));
                     
