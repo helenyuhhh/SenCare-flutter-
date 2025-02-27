@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sencare/addPatient.dart';
 
 // define enum for filter
-enum PatientFilter {critical, normal, all}
+enum PatientFilter {critical, normal}
 
 class PatientListScreen extends StatefulWidget{
   // variable to receive the passed username
@@ -20,7 +21,6 @@ class _PatientListState extends State<PatientListScreen> {
   SearchController _searchBarController = SearchController();
   // a filter set for filter the oatienrs with conditions
   Set<PatientFilter> filters = <PatientFilter>{};
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,11 +76,19 @@ class _PatientListState extends State<PatientListScreen> {
             }).toList(),
             ),
             const SizedBox(height: 10.0,),
-            Text('Looking for ${filters.map((PatientFilter p)=> p.name).join(', ')}')
-            
+            Text('Looking for ${filters.map((PatientFilter p)=> p.name).join(', ')}'),
             // patient list
               // swipeable, to edit and delete(should have a alert dialog)
             // button to add button
+            ElevatedButton(onPressed: (){
+              // press to nagivate to addPatient
+              Navigator.push(context, 
+             MaterialPageRoute(builder: (context) => 
+             AddPatient()));
+
+            }, 
+            child: const Text("Add Patient"))
+
           ],
         ),
         
