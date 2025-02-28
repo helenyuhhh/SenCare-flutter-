@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sencare/addPatient.dart';
 import 'package:sencare/patientInfo.dart';
+import 'package:sencare/editpatient.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
 // define enum for filter
 enum PatientFilter { critical, normal }
 
@@ -82,18 +85,75 @@ class _PatientListState extends State<PatientListScreen> {
             // patient list
             // swipeable, to edit and delete(should have a alert dialog)
             Expanded(
-              child: ListView.builder(
+                child: ListView.builder(
               itemCount: 20,
               itemBuilder: (_, int index) {
-                return ListTile(
-                  onTap: () {
-                    // later this will pass the id to the next screen
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PatientInfo()));
-                    
-                  },
-                  title: Text('Patient $index'),
-                );
+                return Slidable(
+                    key: Key(
+                      index.toString(),
+                    ),
+                    endActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EditPatient()));
+                          },
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          icon: Icons.edit_square,
+                          label: 'Edit',
+                        ),
+                        SlidableAction(
+                          onPressed: (context) {
+                            // display delete logic here
+                            // list.removeAt(index)
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Confirm Delete"),
+                                  content: Text(
+                                      "Are you sure you want to delete this item?"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: Text("Cancel"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Delete"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete,
+                          label: 'Delete',
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      onTap: () {
+                        // later this will pass the id to the next screen
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PatientInfo()));
+                      },
+                      title: Text('Patient $index'),
+                    ));
+
+                //
               },
             )),
 
