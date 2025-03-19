@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 // this screen should be stateless since it only displays the result
-class TestInfo extends StatelessWidget{
+class TestInfo extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _TextInfoState();
+  }
+}
+
+class _TextInfoState extends State<TestInfo> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    
     return Scaffold(
       appBar: AppBar(title: const Text('Test Info'),),
       body: Padding(

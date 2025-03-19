@@ -4,7 +4,16 @@ import 'package:sencare/testsListScreen.dart';
 
 // this should be stateless widget since it's just displaying, not changing
 // a function to receive the patient id
-class PatientInfo extends StatelessWidget {
+// this should be a stateful widget
+class PatientInfo extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _PatientInfoState();
+  }
+}
+
+class _PatientInfoState extends State<PatientInfo>{
   // final String receiveID;
   // constructor
   // const PatientInfo(this.receiveID, {super.key});
