@@ -18,9 +18,10 @@ class _LoginState extends State<LoginScreen> {
     if ( _usernameController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
       if ((_usernameController.text == 'Admin' && _passwordController.text == 'admin')){
         validAuth = true;
-        Navigator.push(
+        // hide the back button
+        Navigator.pushReplacement(
           context, 
-        MaterialPageRoute(builder: (context) => PatientListScreen(_usernameController.text)));
+         MaterialPageRoute(builder: (context) => PatientListScreen(_usernameController.text)));
       }
       else {
         validAuth = false;
