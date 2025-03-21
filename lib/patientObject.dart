@@ -1,6 +1,13 @@
 // patient model
+class Name {
+  String first;
+  String last;
+
+  Name(this.first, this.last);
+}
+
 class PatientObject{
-  String name = "";
+  Name name;
   int age = 0;
   String gender = "";
   String room = "";
