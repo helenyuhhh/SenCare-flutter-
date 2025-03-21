@@ -22,6 +22,15 @@ class PatientListScreen extends StatefulWidget {
 }
 
 class _PatientListState extends State<PatientListScreen> {
+  bool _isLoading = true;
+  String _errorMessage = '';
+  
+  @override
+  void initState() {
+    super.initState();
+    fetchPatients();
+  }
+
   // define a search bar controller
   SearchController _searchBarController = SearchController();
   // a filter set for filter the oatienrs with conditions
@@ -90,9 +99,17 @@ class _PatientListState extends State<PatientListScreen> {
             // patient list
             // swipeable, to edit and delete(should have a alert dialog)
             Expanded(
-                child: ListView.builder(
-              itemCount: 20,
+              child: _isLoading? Center(child: CircularProgressIndicator())
+              : _errorMessage.isNotEmpty
+              ? Center(child: Text(_errorMessage))
+              :patients.isEmpty?
+              Center(child: Text('No patients fpund'))
+
+              :RefreshIndicator(onRefresh: ()async => fetchPatients(), 
+              child: ListView.builder(
+              itemCount: patients.length,
               itemBuilder: (_, int index) {
+                final patient = patients[index];
                 return Slidable(
                     key: Key(
                       index.toString(),
@@ -155,12 +172,13 @@ class _PatientListState extends State<PatientListScreen> {
                             MaterialPageRoute(
                                 builder: (context) => PatientInfo()));
                       },
-                      title: Text('Patient $index'),
+                      title: Text("${patient['name']['first']} ${patient['name']['last']}"),
+                      subtitle: Text('Room: ${patient['room']}'),
                     ));
-
                 //
               },
-            )),
+            ))
+          ),
 
             // button to add button
             ElevatedButton(
@@ -176,15 +194,26 @@ class _PatientListState extends State<PatientListScreen> {
     );
   }
 
-  // void fetchPatients() async {
-  //   print("fetch patient called");
-  //   const url = 'http://172.16.7.126:3000/api/patients';
-  //   final response = await http.get(Uri.parse(url));
-  //   final body = response.body;
-  //   final json = jsonDecode(body);
-  //   setState(() {
-  //     patients = json['name'];
-  //   });
-
-  // }
+  void fetchPatients() async {
+  try {
+    print("fetch patient called");
+    const url = 'http://172.16.7.126:3000/api/patients';
+    final response = await http.get(Uri.parse(url));
+    
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      setState(() {
+        patients = json; 
+        _isLoading = false;
+      });
+    } else {
+      throw Exception('Failed to load patients');
+    }
+  } catch (error) {
+    setState(() {
+      _errorMessage = 'Failed to load patients: ${error.toString()}';
+      _isLoading = false;
+    });
+  }
+}
 }

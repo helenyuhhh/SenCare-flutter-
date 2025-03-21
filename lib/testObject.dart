@@ -7,6 +7,9 @@ class Reading {
   int? diastolic = 0;
   Reading(this.heartBeat, this.respiratory, this.bloodOxygen, this.systolic,
   this.diastolic);
+  Reading.fromJson(Map<String, dynamic> json, String category) {
+
+  }
 }
 
 class TestObject {

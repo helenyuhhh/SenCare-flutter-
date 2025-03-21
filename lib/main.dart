@@ -16,7 +16,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'Sencare',
       routes:{
-        '/': (context) => PatientListScreen(""),
+        '/': (context) => LoginScreen(),
         '/search':(context) => SearchScreen(),
         'patientInfo': (context) => PatientInfo(),
 
