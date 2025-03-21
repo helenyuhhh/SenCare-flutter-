@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sencare/loginScreen.dart';
+import 'package:sencare/patientListScreen.dart';
+import 'package:sencare/searchScreen.dart';
+import 'package:sencare/patientInfo.dart';
 
 void main() {
   runApp(const MainApp());
@@ -11,12 +14,13 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: 
-          LoginScreen(),
-        ),
-      ),
+      title: 'Sencare',
+      routes:{
+        '/': (context) => PatientListScreen(""),
+        '/search':(context) => SearchScreen(),
+        'patientInfo': (context) => PatientInfo(),
+
+      }
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:sencare/addPatient.dart';
 import 'package:sencare/patientInfo.dart';
 import 'package:sencare/editpatient.dart';
+import 'dart:convert';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 // define enum for filter
@@ -24,6 +26,8 @@ class _PatientListState extends State<PatientListScreen> {
   SearchController _searchBarController = SearchController();
   // a filter set for filter the oatienrs with conditions
   Set<PatientFilter> filters = <PatientFilter>{};
+  // patientList
+  List<dynamic> patients = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +38,7 @@ class _PatientListState extends State<PatientListScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // don't forget the widget!
+            
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -170,4 +175,16 @@ class _PatientListState extends State<PatientListScreen> {
       ),
     );
   }
+
+  // void fetchPatients() async {
+  //   print("fetch patient called");
+  //   const url = 'http://172.16.7.126:3000/api/patients';
+  //   final response = await http.get(Uri.parse(url));
+  //   final body = response.body;
+  //   final json = jsonDecode(body);
+  //   setState(() {
+  //     patients = json['name'];
+  //   });
+
+  // }
 }
