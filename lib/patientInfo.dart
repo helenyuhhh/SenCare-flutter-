@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:sencare/networkingManager.dart';
 import 'package:flutter/material.dart';
 import 'package:sencare/editpatient.dart';
@@ -13,7 +12,6 @@ class PatientInfo extends StatefulWidget {
   const PatientInfo({Key? key, required this.patientId}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _PatientInfoState();
   }
 }
@@ -53,11 +51,10 @@ class _PatientInfoState extends State<PatientInfo> {
                             borderRadius: BorderRadius.circular(50),
                             child: Image.network(
                               patientObject.picture,
-                              width: 100,
-                              height: 100,
+                              width: 150,
+                              height: 150,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
-                                print("Image error: $error");
                                 return Text("No image");
                               },
                             ),
