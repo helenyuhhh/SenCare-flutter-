@@ -10,6 +10,8 @@ const List<String> _testNames = <String>[
   'Respiratory Rate',
 ];
 class TestAdd extends StatefulWidget {
+  final String patientId;
+  const TestAdd({Key? key, required this.patientId}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -138,7 +140,7 @@ class _TestAdd extends State<TestAdd>{
               IconButton(onPressed: (){
                     // 
                     Navigator.pop(context,
-                      MaterialPageRoute(builder: (context) => TextListScreen()));
+                      MaterialPageRoute(builder: (context) => TextListScreen(patientId: widget.patientId)));
                   }, 
                   icon: Icon(Icons.add_to_queue_rounded, size: 72))
 

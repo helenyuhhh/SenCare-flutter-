@@ -5,13 +5,29 @@ import 'package:sencare/patientObject.dart';
 
 
 class NetworkingManager {
-
-static const String baseUrl = 'http://172.16.7.126:3000/api';
+// school base url: switch this when presentation http://10.24.48.115:3000/api
+// home network address: http://172.16.7.126:3000/api
+static const String baseUrl = 'http://10.24.48.115:3000/api';
   // fetch all patients -- PatientListScreen
   Future<List<dynamic>> getAllPatient() async {
     try{
       http.Response response = 
             await http.get(Uri.parse('$baseUrl/patients'));
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+    }else {
+      throw Exception('Failed to load patients: ${response.statusCode}');
+    }
+    }catch(error){
+      print('Error fetching patient: $error');
+      return [];
+    }
+  }
+  // fetch all tests
+  Future<List<dynamic>> getAllTests(String id) async {
+    try{
+      http.Response response = 
+            await http.get(Uri.parse('$baseUrl/patients/$id/tests'));
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
     }else {

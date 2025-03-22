@@ -21,7 +21,7 @@ class _PatientInfoState extends State<PatientInfo> {
   // constructor
   // const PatientInfo(this.receiveID, {super.key});
   
-  var patientObject = PatientObject(Name("", ""), 0, "", "", "", "", "", "");
+  var patientObject = PatientObject(Name("", ""), 0, "", "", "", "", "", "no image");
 
   final NetworkingManager _networkingManager = NetworkingManager();
   String name = "";
@@ -197,7 +197,7 @@ class _PatientInfoState extends State<PatientInfo> {
             ),
             ElevatedButton(onPressed: () {
               Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TextListScreen()));
+                      MaterialPageRoute(builder: (context) => TextListScreen(patientId: widget.patientId)));
             }, child: const Text('Tests'))
           ],
         );

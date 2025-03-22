@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:sencare/testAddScreen.dart';
 import 'package:sencare/testInfoScreen.dart';
+import 'package:sencare/networkingManager.dart';
 // this screen should be stateful
 
 class TextListScreen extends StatefulWidget{
+  final String patientId;
+  const TextListScreen({Key? key, required this.patientId}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -12,6 +16,16 @@ class TextListScreen extends StatefulWidget{
 }
 
 class _TextListState extends State<TextListScreen>{
+  final NetworkingManager _networkingManager = NetworkingManager();
+  var testList = [];
+  // fetch all the tests from the db
+  Future getAllTests() async{
+    var list = await _networkingManager.getAllTests(widget.patientId);
+    testList = list;
+    return list;
+  }
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +36,7 @@ class _TextListState extends State<TextListScreen>{
           children: [
             Expanded(
               child: ListView.builder(
-              itemCount: 5,
+              itemCount: testList.length,
               itemBuilder: (_, int index) {
                 return ListTile(
                   onTap: () {
@@ -40,7 +54,7 @@ class _TextListState extends State<TextListScreen>{
                 onPressed: () {
                   // press to nagivate to addPatient
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TestAdd()));
+                      MaterialPageRoute(builder: (context) => TestAdd(patientId: widget.patientId)));
                 },
                 child: const Text("Add Tests"))
           ],
