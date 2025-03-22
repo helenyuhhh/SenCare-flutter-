@@ -40,7 +40,9 @@ class _EditPatient extends State<EditPatient> {
         newHeight: _changeHeight.text.isNotEmpty? _changeHeight.text : null,
       );
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Patient updated successfully!"))
+        SnackBar(
+          content: Text("Patient updated successfully!"),
+          backgroundColor: Colors.green)
       );
       Navigator.pushReplacement(
         context,
@@ -52,7 +54,8 @@ class _EditPatient extends State<EditPatient> {
       print('patient id: ${widget.patientId}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to update!'))
+          content: Text('Failed to update!'),
+          backgroundColor: Colors.red)
       );
     }
   }
