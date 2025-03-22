@@ -18,7 +18,9 @@ class MainApp extends StatelessWidget {
       routes:{
         '/': (context) => LoginScreen(),
         '/search':(context) => SearchScreen(),
-        'patientInfo': (context) => PatientInfo(),
+        'patientInfo': (context) => PatientInfo(
+          patientId: ModalRoute.of(context)!.settings.arguments as String,
+        ),
 
       }
     );

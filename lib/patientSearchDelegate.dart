@@ -4,7 +4,7 @@ import 'package:sencare/networkingManager.dart';
 class PatientSearchDelegate extends SearchDelegate{
   var patientList = [];
   Future getAllPatientsFromAPI(String searchTerm) async {
-    var list = await NetworkingManager().getAllPatient(searchTerm);
+    var list = await NetworkingManager().getPatientByName(searchTerm);
     patientList = list;
     return list;
   }

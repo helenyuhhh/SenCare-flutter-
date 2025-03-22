@@ -5,6 +5,8 @@ import 'package:sencare/patientInfo.dart';
 import 'package:sencare/editpatient.dart';
 import 'dart:convert';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:sencare/networkingManager.dart';
+import 'package:sencare/patientSearchDelegate.dart';
 
 // define enum for filter
 enum PatientFilter { critical, normal }
@@ -24,6 +26,7 @@ class PatientListScreen extends StatefulWidget {
 class _PatientListState extends State<PatientListScreen> {
   bool _isLoading = true;
   String _errorMessage = '';
+  final NetworkingManager _networkingManager = NetworkingManager();
   
   @override
   void initState() {
@@ -37,17 +40,25 @@ class _PatientListState extends State<PatientListScreen> {
   Set<PatientFilter> filters = <PatientFilter>{};
   // patientList
   List<dynamic> patients = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Patient List')),
+      appBar: AppBar(
+        title: const Text('Patient List'),
+        actions: [
+          IconButton(
+            onPressed: (){
+              showSearch(context: context, delegate: PatientSearchDelegate());
+            }, 
+          icon: Icon(Icons.search))
+      ],),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // don't forget the widget!
-            
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -58,16 +69,6 @@ class _PatientListState extends State<PatientListScreen> {
             // a search bar
             SizedBox(
               height: 15,
-            ),
-            SearchBar(
-              controller: _searchBarController,
-              padding: const WidgetStatePropertyAll<EdgeInsets>(
-                EdgeInsets.symmetric(horizontal: 16.0),
-              ),
-              onTap: () {
-                // search function
-              },
-              leading: const Icon(Icons.search),
             ),
             const SizedBox(
               height: 10.0,
@@ -122,7 +123,7 @@ class _PatientListState extends State<PatientListScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => EditPatient()));
+                                    builder: (context) => EditPatient(patientId: patient['_id'])));
                           },
                           backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
@@ -168,9 +169,13 @@ class _PatientListState extends State<PatientListScreen> {
                       onTap: () {
                         // later this will pass the id to the next screen
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PatientInfo()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PatientInfo(patientId: patient['_id'])
+                            ),
+                        ).then((_){
+                          fetchPatients();
+                        });
                       },
                       title: Text("${patient['name']['first']} ${patient['name']['last']}"),
                       subtitle: Text('Room: ${patient['room']}'),
@@ -184,8 +189,12 @@ class _PatientListState extends State<PatientListScreen> {
             ElevatedButton(
                 onPressed: () {
                   // press to nagivate to addPatient
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AddPatient()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddPatient()))
+                      .then((_){
+                        fetchPatients();
+                      });
                 },
                 child: const Text("Add Patient"))
           ],
@@ -195,25 +204,22 @@ class _PatientListState extends State<PatientListScreen> {
   }
 
   void fetchPatients() async {
-  try {
-    print("fetch patient called");
-    const url = 'http://172.16.7.126:3000/api/patients';
-    final response = await http.get(Uri.parse(url));
-    
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
+    setState(() {
+      _isLoading = true;
+      _errorMessage = "";
+    });
+    try{
+      final patientliat = await _networkingManager.getAllPatient();
       setState(() {
-        patients = json; 
+        patients = patientliat;
         _isLoading = false;
       });
-    } else {
-      throw Exception('Failed to load patients');
+    }catch(error){
+      setState(() {
+        _errorMessage = 'Failed to load patients: ${error.toString()}';
+        _isLoading = false;
+      });
     }
-  } catch (error) {
-    setState(() {
-      _errorMessage = 'Failed to load patients: ${error.toString()}';
-      _isLoading = false;
-    });
+  
   }
-}
 }

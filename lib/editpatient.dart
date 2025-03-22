@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sencare/patientInfo.dart';
 
 class EditPatient extends StatefulWidget {
+  final String patientId;
+  const EditPatient({Key? key, required this.patientId}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return _EditPatient();
@@ -9,6 +11,19 @@ class EditPatient extends StatefulWidget {
 }
 
 class _EditPatient extends State<EditPatient> {
+
+  bool _isLoading = true;
+  String _errorMessage = '';
+  
+  @override
+  void initState() {
+    super.initState();
+    fetchPatientData();
+  }
+  void fetchPatientData() async{
+
+
+  }
   // room, age, weight. height
   final TextEditingController _changeRoom = TextEditingController();
   final TextEditingController _changeAge = TextEditingController();
@@ -99,10 +114,11 @@ class _EditPatient extends State<EditPatient> {
             SizedBox(
               height: 5,
             ),
+            
             ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context,
-                      MaterialPageRoute(builder: (context) => PatientInfo()));
+                      MaterialPageRoute(builder: (context) => PatientInfo(patientId: widget.patientId)));
                 },
                 child: const Text("Save"))
           ],

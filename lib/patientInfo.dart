@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:sencare/editpatient.dart';
 import 'package:sencare/testsListScreen.dart';
+import 'package:http/http.dart' as http;
 
 // this should be stateless widget since it's just displaying, not changing
 // a function to receive the patient id
 // this should be a stateful widget
 class PatientInfo extends StatefulWidget {
+  final String patientId;
+  const PatientInfo({Key? key, required this.patientId}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -17,9 +22,41 @@ class _PatientInfoState extends State<PatientInfo>{
   // final String receiveID;
   // constructor
   // const PatientInfo(this.receiveID, {super.key});
+  bool _isLoading = true;
+  String _errorMessage = '';
+  Map<String, dynamic> patientData = {};
+  
+  @override
+  void initState() {
+    super.initState();
+    fetchPatientDetails();
+  }
+  void fetchPatientDetails() async {
+    try {
+      final url = 'http://172.16.7.126:3000/api/patients/${widget.patientId}';
+      final response = await http.get(Uri.parse(url));
+
+      if(response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        setState(() {
+          patientData = json;
+          _isLoading = false;
+        });
+      }
+      else {
+        throw Exception('Failed on load patient details');
+      }
+    }catch (error){
+      setState(() {
+        _errorMessage = 'failed to load patient details: ${error.toString()}';
+        _isLoading = false;
+      });
+      
+
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(title: const Text('Patient Info'),),
       body: Padding(
@@ -35,7 +72,11 @@ class _PatientInfoState extends State<PatientInfo>{
               child: IconButton(
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => EditPatient()));
+                        MaterialPageRoute(
+                          builder: (context) => EditPatient(patientId: widget.patientId)),
+                        ).then((_){
+                          fetchPatientDetails();
+                        });
                   },
                   icon: Icon(
                     Icons.edit_square,
