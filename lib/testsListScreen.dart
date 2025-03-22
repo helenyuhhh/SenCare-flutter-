@@ -49,9 +49,12 @@ class _TextListState extends State<TextListScreen>{
                 Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => TestInfo(testId: personalTests[index][''])
+                            builder: (context) => 
+                            TestInfo(testId: personalTests[index]['id'], 
+                            patientId: widget.patientId)
                             ),
-                        );
+                        ).then((_){
+                        });
               }
 
             ));

@@ -30,6 +30,7 @@ class _PatientInfoState extends State<PatientInfo> {
     print('patient img link: ${patientObject.picture}');
     print('patient img link: ${patientObject.age}');
     name = patientObject.name.first + " " + patientObject.name.last;
+    print('patientid IN INFO PAGE: ${widget.patientId}');
     return patientObject;
   }
 

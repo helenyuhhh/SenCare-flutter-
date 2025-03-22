@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sencare/patientInfo.dart';
+import 'package:sencare/patientObject.dart';
+import 'package:sencare/networkingManager.dart';
 
 class EditPatient extends StatefulWidget {
   final String patientId;
@@ -11,24 +13,50 @@ class EditPatient extends StatefulWidget {
 }
 
 class _EditPatient extends State<EditPatient> {
-
-  bool _isLoading = true;
-  String _errorMessage = '';
-  
-  @override
-  void initState() {
-    super.initState();
-    fetchPatientData();
-  }
-  void fetchPatientData() async{
-
-
-  }
+  late PatientObject _patient;
   // room, age, weight. height
   final TextEditingController _changeRoom = TextEditingController();
   final TextEditingController _changeAge = TextEditingController();
   final TextEditingController _changeWeight = TextEditingController();
   final TextEditingController _changeHeight = TextEditingController();
+  bool _isLoading = false;
+  String _errorMessage = "";
+  @override
+  void dispose(){
+    _changeRoom.dispose();
+    _changeAge.dispose();
+    _changeWeight.dispose();
+    _changeHeight.dispose();
+    super.dispose();
+  }
+  final NetworkingManager _networkingManager = NetworkingManager();
+  Future<void> _saveChanges() async {
+    try {
+      await _networkingManager.updatePatient(
+        widget.patientId, 
+        newRoom: _changeRoom.text.isNotEmpty? _changeRoom.text : null,
+        newAge: _changeAge.text.isNotEmpty? int.tryParse(_changeAge.text) : null,
+        newWeight: _changeWeight.text.isNotEmpty? _changeWeight.text : null,
+        newHeight: _changeHeight.text.isNotEmpty? _changeHeight.text : null,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Patient updated successfully!"))
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => PatientInfo(patientId: widget.patientId)));
+    }catch(error){
+      setState(() {
+        _errorMessage = "Failed to update";
+      });
+      print('patient id: ${widget.patientId}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update!'))
+      );
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -116,10 +144,7 @@ class _EditPatient extends State<EditPatient> {
             ),
             
             ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context,
-                      MaterialPageRoute(builder: (context) => PatientInfo(patientId: widget.patientId)));
-                },
+                onPressed: _saveChanges,
                 child: const Text("Save"))
           ],
         ),
