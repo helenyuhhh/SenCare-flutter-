@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sencare/networkingManager.dart';
-
+// in progress
 class PatientSearchDelegate extends SearchDelegate{
   var patientList = [];
   Future getAllPatientsFromAPI(String searchTerm) async {
-    var list = await NetworkingManager().getPatientByName(searchTerm);
+    var list = await NetworkingManager().getAllPatientByName(searchTerm);
     patientList = list;
     return list;
   }

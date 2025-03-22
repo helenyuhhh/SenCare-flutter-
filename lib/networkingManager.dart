@@ -1,7 +1,5 @@
 // handles all the api call here
 import 'dart:convert';
-import 'dart:ffi';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:sencare/patientObject.dart';
 
@@ -9,7 +7,7 @@ import 'package:sencare/patientObject.dart';
 class NetworkingManager {
 
 static const String baseUrl = 'http://172.16.7.126:3000/api';
-  
+  // fetch all patients -- PatientListScreen
   Future<List<dynamic>> getAllPatient() async {
     try{
       http.Response response = 
@@ -24,9 +22,8 @@ static const String baseUrl = 'http://172.16.7.126:3000/api';
       return [];
     }
   }
-
-
-  Future<List<dynamic>> getPatientByName(String name) async {
+  // get all patients by name
+  Future<List<dynamic>> getAllPatientByName(String name) async {
     try{
       http.Response response = 
       await http.get(Uri.parse('$baseUrl/patients?name=$name'));
@@ -40,15 +37,56 @@ static const String baseUrl = 'http://172.16.7.126:3000/api';
     }catch(error){
       print('Error searching patient: $error');
       return [];
+     
     }
-    
+  }
+  // get patient by searching name -- SearchScreen
+  Future<PatientObject> getPatientByName(String name) async {
+    try{
+      http.Response response = 
+      await http.get(Uri.parse('$baseUrl/patients?name=$name'));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    }else {
+      throw Exception("Failed to find patient ${response.statusCode}");
+      
+    }
+    }catch(error){
+      print('Error searching patient: $error');
+      return PatientObject(Name("", ""), 0, "", "", "", "", "", "");
+     
+    }
+  }
+  // get patient by id -- PatientinfoScreen 
+  Future<PatientObject> getPatientById(String id) async {
+    try{
+      http.Response response = 
+      await http.get(Uri.parse('$baseUrl/patients/$id'));
+
+    if (response.statusCode == 200) {
+      var jsonObj = jsonDecode(response.body);
+      var fname = jsonObj['name']['first'] as String;
+      var lname = jsonObj['name']['last'] as String;
+      var age = jsonObj['age'] as int;
+      var gender = jsonObj['gender'] as String;
+      var room = jsonObj['room'] as String;
+      var condition = jsonObj['condition'] as String;
+      var weight = jsonObj['weight'] as String;
+      var height = jsonObj['height'] as String;
+      var picture = jsonObj['picture'];
+      return PatientObject(Name(fname, lname), age, gender, room, condition, weight, height, picture);
+
+    }else {
+      throw Exception("Failed to find patient ${response.statusCode}");
+      
+    }
+    }catch(error){
+      print('Error searching patient with id: $error');
+      return PatientObject(Name("", ""), 0, "", "", "", "", "", "");
+    }
   }
 
-  // Future<PatientObject> getPatient(String name){
-  //   http.Response response = 
-  //   await http.get
-
-  // }
 
 
 }

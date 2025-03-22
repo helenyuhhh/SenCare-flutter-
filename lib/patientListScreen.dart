@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:sencare/addPatient.dart';
 import 'package:sencare/patientInfo.dart';
 import 'package:sencare/editpatient.dart';
-import 'dart:convert';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sencare/networkingManager.dart';
 import 'package:sencare/patientSearchDelegate.dart';

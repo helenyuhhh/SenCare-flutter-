@@ -1,9 +1,9 @@
 import 'dart:convert';
-
+import 'package:sencare/networkingManager.dart';
 import 'package:flutter/material.dart';
 import 'package:sencare/editpatient.dart';
 import 'package:sencare/testsListScreen.dart';
-import 'package:http/http.dart' as http;
+import 'package:sencare/patientObject.dart';
 
 // this should be stateless widget since it's just displaying, not changing
 // a function to receive the patient id
@@ -18,52 +18,51 @@ class PatientInfo extends StatefulWidget {
   }
 }
 
-class _PatientInfoState extends State<PatientInfo>{
+class _PatientInfoState extends State<PatientInfo> {
   // final String receiveID;
   // constructor
   // const PatientInfo(this.receiveID, {super.key});
-  bool _isLoading = true;
-  String _errorMessage = '';
-  Map<String, dynamic> patientData = {};
   
-  @override
-  void initState() {
-    super.initState();
-    fetchPatientDetails();
-  }
-  void fetchPatientDetails() async {
-    try {
-      final url = 'http://172.16.7.126:3000/api/patients/${widget.patientId}';
-      final response = await http.get(Uri.parse(url));
+  var patientObject = PatientObject(Name("", ""), 0, "", "", "", "", "", "");
 
-      if(response.statusCode == 200) {
-        final json = jsonDecode(response.body);
-        setState(() {
-          patientData = json;
-          _isLoading = false;
-        });
-      }
-      else {
-        throw Exception('Failed on load patient details');
-      }
-    }catch (error){
-      setState(() {
-        _errorMessage = 'failed to load patient details: ${error.toString()}';
-        _isLoading = false;
-      });
-      
-
-    }
+  final NetworkingManager _networkingManager = NetworkingManager();
+  String name = "";
+  Future getPatientById(String patientId) async {
+    patientObject = await _networkingManager.getPatientById(patientId);
+    print('patient img link: ${patientObject.picture}');
+    print('patient img link: ${patientObject.age}');
+    name = patientObject.name.first + " " + patientObject.name.last;
+    return patientObject;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Patient Info'),),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+      appBar: AppBar(
+        title: const Text('Patient Info'),
+        
+      ),
+      body: FutureBuilder(
+          future: getPatientById(widget.patientId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Column(
           children: [
-            Icon(Icons.person_2_outlined, size: 120),
+             patientObject.picture.isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: Image.network(
+                              patientObject.picture,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                print("Image error: $error");
+                                return Text("No image");
+                              },
+                            ),
+                          )
+                        : Icon(Icons.person),
             SizedBox(
               height: 5,
             ),
@@ -75,7 +74,6 @@ class _PatientInfoState extends State<PatientInfo>{
                         MaterialPageRoute(
                           builder: (context) => EditPatient(patientId: widget.patientId)),
                         ).then((_){
-                          fetchPatientDetails();
                         });
                   },
                   icon: Icon(
@@ -95,9 +93,9 @@ class _PatientInfoState extends State<PatientInfo>{
                 ),
                 Expanded(
                   // read from passed object
-                  child: Text(
-                    'Sample data',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  child:
+                      Text(name,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                 ),
               ],
@@ -115,7 +113,7 @@ class _PatientInfoState extends State<PatientInfo>{
                 Expanded(
                   // read from passed object
                   child: Text(
-                    'Sample data',
+                    patientObject.room,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -134,7 +132,7 @@ class _PatientInfoState extends State<PatientInfo>{
                 Expanded(
                   // read from passed object
                   child: Text(
-                    'Sample data',
+                    patientObject.gender,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -153,7 +151,7 @@ class _PatientInfoState extends State<PatientInfo>{
                 Expanded(
                   // read from passed object
                   child: Text(
-                    'Sample data',
+                    patientObject.age.toString(),
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -172,7 +170,7 @@ class _PatientInfoState extends State<PatientInfo>{
                 Expanded(
                   // read from passed object
                   child: Text(
-                    'Sample data',
+                    patientObject.weight,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -191,7 +189,7 @@ class _PatientInfoState extends State<PatientInfo>{
                 Expanded(
                   // read from passed object
                   child: Text(
-                    'Sample data',
+                    patientObject.height,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -205,8 +203,22 @@ class _PatientInfoState extends State<PatientInfo>{
                       MaterialPageRoute(builder: (context) => TextListScreen()));
             }, child: const Text('Tests'))
           ],
-        ),
-      ),
+        );
+      
+              
+        } else {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Error loading patient data",
+                    style: TextStyle(fontSize: 18, color: Colors.redAccent),)
+                  ],
+                ),
+
+              );
+            } 
+          } ),
     );
   }
 }
