@@ -5,9 +5,11 @@ import 'package:sencare/patientObject.dart';
 
 
 class NetworkingManager {
+  // run ifconfig | grep "inet " | grep -v 127.0.0.1' to check ip address
 // school base url: switch this when presentation http://10.24.48.115:3000/api
-// home network address: http://172.16.7.126:3000/api
-static const String baseUrl = 'http://10.24.48.115:3000/api';
+// home network address: http://172.16.7.102:3000/api
+// school: static const String baseUrl = 'http://10.24.48.115:3000/api';
+static const String baseUrl = 'http://172.16.7.102:3000/api';
   // fetch all patients -- PatientListScreen
   Future<List<dynamic>> getAllPatient() async {
     try{

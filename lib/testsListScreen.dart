@@ -18,47 +18,44 @@ class TextListScreen extends StatefulWidget{
 class _TextListState extends State<TextListScreen>{
   final NetworkingManager _networkingManager = NetworkingManager();
   var testList = [];
+  var personalTests = [];
   // fetch all the tests from the db
   Future getAllTests() async{
     var list = await _networkingManager.getAllTests(widget.patientId);
     testList = list;
+    //personalTests = list.where((i) => i['patient_id']).toList();
+    personalTests = testList.where((test) => 
+        test['patient_id'] == widget.patientId // Match your API's key name
+      ).toList();
     return list;
   }
+  // var personalTests = testList
+
 
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Tests'),),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-              itemCount: testList.length,
-              itemBuilder: (_, int index) {
-                return ListTile(
-                  onTap: () {
-                    // later this will pass the id to the next screen
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TestInfo()));
-                  },
-                  title: Text('Test $index'),
-                );
-              },
-            ),),
+      body: FutureBuilder(
+        future: getAllTests(), 
+        builder: (context, snapshot){
+          return ListView.builder(
+            itemCount: personalTests.length,
+            itemBuilder: (context, index)=>ListTile(
+              title: Text(personalTests[index]['category']),
+              subtitle: Text(personalTests[index]['date']),
+              onTap:(){
+                Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TestInfo(testId: personalTests[index][''])
+                            ),
+                        );
+              }
 
-            // button to add button
-            ElevatedButton(
-                onPressed: () {
-                  // press to nagivate to addPatient
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TestAdd(patientId: widget.patientId)));
-                },
-                child: const Text("Add Tests"))
-          ],
-        ),),
+            ));
+        })
     );
   }
 }

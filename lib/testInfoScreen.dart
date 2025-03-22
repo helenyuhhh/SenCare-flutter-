@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 // this screen should be stateless since it only displays the result
 class TestInfo extends StatefulWidget{
+  final String testId;
+  const TestInfo({Key? key, required this.testId}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
+    
     return _TextInfoState();
   }
 }
