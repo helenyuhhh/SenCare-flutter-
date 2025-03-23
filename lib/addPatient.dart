@@ -1,8 +1,11 @@
+import 'dart:math';
+import 'package:sencare/patientObject.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
     as picker;
 import 'package:sencare/patientListScreen.dart';
-
+import 'package:sencare/patientObject.dart';
+import 'package:sencare/networkingManager.dart';
 enum Gender { male, female }
 
 enum Condition { normal, critical }
@@ -15,6 +18,11 @@ class AddPatient extends StatefulWidget {
 }
 
 class _AddPatientState extends State<AddPatient> {
+  final NetworkingManager _networkingManager = NetworkingManager();
+  bool _isLoading = false;
+  String _errorMessage = "";
+  //var picUrl = "https://randomuser.me/api/portraits/med/women/50.jpg";
+  PatientObject newPatient = PatientObject(Name("", ""), 0, "", "", "", "", "", "", "");
   // controller for first name
   final TextEditingController fnameController = TextEditingController();
   // for last name
@@ -41,7 +49,6 @@ class _AddPatientState extends State<AddPatient> {
         return "Not selected";
     }
   }
-
   String getConditionString(Condition? condition) {
     switch (condition) {
       case Condition.normal:
@@ -52,8 +59,80 @@ class _AddPatientState extends State<AddPatient> {
         return "Not selected";
     }
   }
+  String getImgLink(){
+    final randomInt = Random().nextInt(98)+1;
+    final chosenGender = _gender == Gender.male? "men" : "women";
+    return "https://randomuser.me/api/portraits/med/$chosenGender/$randomInt.jpg";
+  }
   // date picker
+  bool validInput(){
+    if (fnameController.text.isEmpty || lnameController.text.isEmpty
+    || ageController.text.isEmpty || roomController.text.isEmpty) {
+      setState(() {
+        _errorMessage = "Please input value!";
+      });
+      return false;
+    }
+    else {
+      try{
+        int.parse(ageController.text);
+      }catch(error){
+        setState(() {
+          _errorMessage = "Age must be an integer!";
+        });
+        return false;
+        
+      }
+    }
+    return true;
+    
+  }
 
+  Future<void> addNewpatient()async{
+    if (!validInput()){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_errorMessage),
+        backgroundColor: Colors.red)
+      );
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+      _errorMessage = "";
+    });
+    try{
+      final newPatient = PatientObject(
+        Name(fnameController.text, lnameController.text), 
+        int.parse(ageController.text), 
+        getGenderString(_gender), 
+        roomController.text, 
+        getConditionString(_condition), 
+        weightController.text, 
+        heightController.text, 
+        dateTimeStr.isNotEmpty ? dateTimeStr : DateTime.now().toString(),
+        getImgLink());
+        await _networkingManager.addPatient(newPatient);
+        ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Patient added successfully!"),
+        backgroundColor: Colors.green)
+      );
+      
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => PatientListScreen("Admin")));
+    }catch (error){
+      print(getGenderString(_gender));
+      print(getImgLink());
+      print(getConditionString(_condition));
+      print(dateTimeStr);
+      _errorMessage = "Failed to add patient";
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_errorMessage),
+        backgroundColor: Colors.red)
+      );
+    }
+    
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,6 +222,7 @@ class _AddPatientState extends State<AddPatient> {
                           onChanged: (Gender? value) {
                             setState(() {
                               _gender = value;
+                              
                             });
                           },
                         ),
@@ -157,6 +237,7 @@ class _AddPatientState extends State<AddPatient> {
                           onChanged: (Gender? value) {
                             setState(() {
                               _gender = value;
+                             
                             });
                           },
                         ),
@@ -314,8 +395,7 @@ class _AddPatientState extends State<AddPatient> {
                   alignment: Alignment.bottomRight,
                   child: IconButton(onPressed: (){
                     // 
-                    Navigator.pop(context,
-                      MaterialPageRoute(builder: (context) => PatientListScreen("")));
+                    addNewpatient();
                   }, 
                   icon: Icon(Icons.group_add, size: 72))
                 ),

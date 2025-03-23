@@ -57,7 +57,7 @@ static const String baseUrl = 'http://172.16.7.102:3000/api';
     }
     }catch(error){
       print('Error searching patient: $error');
-      return PatientObject(Name("", ""), 0, "", "", "", "", "", "");
+      return PatientObject(Name("", ""), 0, "", "", "", "", "", "", "");
      
     }
   }
@@ -77,8 +77,9 @@ static const String baseUrl = 'http://172.16.7.102:3000/api';
       var condition = jsonObj['condition'] as String;
       var weight = jsonObj['weight'] as String;
       var height = jsonObj['height'] as String;
-      var picture = jsonObj['picture'];
-      return PatientObject(Name(fname, lname), age, gender, room, condition, weight, height, picture);
+      var date = jsonObj['date'] as String;
+      var picture = jsonObj['picture'] as String;
+      return PatientObject(Name(fname, lname), age, gender, room, condition, weight, height, date, picture);
 
     }else {
       throw Exception("Failed to find patient ${response.statusCode}");
@@ -86,10 +87,28 @@ static const String baseUrl = 'http://172.16.7.102:3000/api';
     }
     }catch(error){
       print('Error searching patient with id: $error');
-      return PatientObject(Name("", ""), 0, "", "", "", "", "", "");
+      return PatientObject(Name("", ""), 0, "", "", "", "", "", "","");
     }
   }
-  // room, age, weight, height
+  // add new patient
+  Future<void> addPatient(PatientObject patientData) async{
+    try{
+      http.Response response = 
+            await http.post(Uri.parse('$baseUrl/patients/'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(patientData));
+      if (response.statusCode == 201){
+        return jsonDecode(response.body);
+      }
+      else {
+        throw Exception('Failed to create patient: ${response.statusCode}');
+      }
+    }catch(error){
+      print('error creating patient');
+      throw error;
+    }
+  }
+  // change room, age, weight, height
   Future updatePatient(String id,{
     String? newRoom, int? newAge, String? newWeight, String? newHeight}) async{
     try{
@@ -156,8 +175,9 @@ static const String baseUrl = 'http://172.16.7.102:3000/api';
       var condition = jsonObj['condition'] as String;
       var weight = jsonObj['weight'] as String;
       var height = jsonObj['height'] as String;
+      var date = jsonObj['date'] as String;
       var picture = jsonObj['picture'];
-      return PatientObject(Name(fname, lname), age, gender, room, condition, weight, height, picture);
+      return PatientObject(Name(fname, lname), age, gender, room, condition, weight, height, date, picture);
 
     }else {
       throw Exception("Failed to find patient ${response.statusCode}");
@@ -165,7 +185,7 @@ static const String baseUrl = 'http://172.16.7.102:3000/api';
     }
     }catch(error){
       print('Error searching patient with id: $error');
-      return PatientObject(Name("", ""), 0, "", "", "", "", "", "");
+      return PatientObject(Name("", ""), 0, "", "", "", "", "", "", "");
     }
   }
 

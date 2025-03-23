@@ -24,10 +24,11 @@ class PatientObject {
   String condition = ""; 
   String weight = "";
   String height = "";
+  String date = "";
   String picture = "";
   
   PatientObject(this.name, this.age, this.gender, this.room, this.condition,
-    this.weight, this.height,this.picture);
+    this.weight, this.height,this.date, this.picture);
   
   factory PatientObject.fromJson(Map<String, dynamic> json) {
     return PatientObject(
@@ -38,6 +39,7 @@ class PatientObject {
       json['condition'],
       json['weight'],
       json['height'],
+      json['date'],
       json['picture']
     );
   }
@@ -54,6 +56,7 @@ class PatientObject {
       'condition': condition,
       'weight': weight,
       'height': height,
+      'date': date,
       'picture': picture
     };
   }
