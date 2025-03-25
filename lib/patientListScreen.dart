@@ -32,12 +32,34 @@ class _PatientListState extends State<PatientListScreen> {
     fetchPatients();
   }
 
-  // define a search bar controller
-  SearchController _searchBarController = SearchController();
   // a filter set for filter the oatienrs with conditions
   Set<PatientFilter> filters = <PatientFilter>{};
   // patientList
   List<dynamic> patients = [];
+
+  void deletePatient(String patientId) async{
+    try {
+      Navigator.of(context).pop();
+      setState(() {
+        _isLoading = true;
+      });
+      await _networkingManager.removePatient(patientId);
+    
+      fetchPatients();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Patient deleted successfully"),
+        backgroundColor: Colors.green)
+      );
+    } catch (error) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to delete patient: $error"),
+        backgroundColor: Colors.red)
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +160,7 @@ class _PatientListState extends State<PatientListScreen> {
                                 return AlertDialog(
                                   title: Text("Confirm Delete"),
                                   content: Text(
-                                      "Are you sure you want to delete this item?"),
+                                      "Are you sure you want to delete this patient?"),
                                   actions: [
                                     TextButton(
                                       onPressed: () =>
@@ -147,7 +169,8 @@ class _PatientListState extends State<PatientListScreen> {
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        Navigator.of(context).pop();
+                                        deletePatient(patient['_id']);
+                                     
                                       },
                                       child: Text("Delete"),
                                     ),

@@ -142,6 +142,23 @@ static const String baseUrl = 'http://172.16.7.102:3000/api';
       throw error;
     }
   }
+  Future<void> removePatient(String id) async{
+    try{
+      http.Response response = 
+             await http.delete(Uri.parse('$baseUrl/patients/$id'));
+      if (response.statusCode == 200){
+        print('Patient deleted successfully');
+      }
+      else {
+        print('Failed deleting the patient');
+        throw Exception('Failed to delete patient: ${response.statusCode}');
+      }
+
+    }catch(error){
+      print('Error deleting patient: $error');
+      throw error;
+    }
+  }
   //////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////Tests///////////////////////////////////////////
   // fetch all tests
