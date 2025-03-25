@@ -38,19 +38,23 @@ class _TextListState extends State<TextListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text('Tests'),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Expanded(child:
+            Expanded(child: 
             FutureBuilder(
                 future: getAllTests(),
                 builder: (context, snapshot) {
-                  return ListView.builder(
+                  return 
+                  ListView.builder(
                       itemCount: personalTests.length,
-                      itemBuilder: (context, index) => ListTile(
+                      itemBuilder: (context, index) => Card(
+                        child: 
+                        ListTile(
                           title: Text(personalTests[index]['category']),
                           subtitle: Text(personalTests[index]['date']),
                           onTap: () {
@@ -61,10 +65,12 @@ class _TextListState extends State<TextListScreen> {
                                       testId: personalTests[index]['id'],
                                       patientId: widget.patientId)),
                             ).then((_) {});
-                          }));
+                          }),
+                      )
+                      );
                 }) ),
             
-                ElevatedButton(
+                IconButton(
                 onPressed: () {
                   // press to nagivate to addPatient
                   Navigator.push(
@@ -73,7 +79,7 @@ class _TextListState extends State<TextListScreen> {
                       .then((_){
                       });
                 },
-                child: const Text("Add Test"))
+                icon: Icon(Icons.add_circle_rounded), iconSize: 75,)
           ],
         ));
   }

@@ -64,6 +64,7 @@ class _PatientListState extends State<PatientListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         //title: const Text('Patient List'),
         actions: [
@@ -186,8 +187,12 @@ class _PatientListState extends State<PatientListScreen> {
                         ),
                       ],
                     ),
-                    child: ListTile(
+                    child: Card(
+                      color: patient['condition'] == 'Critical'?Color.fromARGB(175, 250, 151, 145): Color.fromARGB(255, 191, 222, 189),
+                       
+                      child: ListTile(
                       onTap: () {
+                        
                         // later this will pass the id to the next screen
                         Navigator.push(
                           context,
@@ -198,9 +203,11 @@ class _PatientListState extends State<PatientListScreen> {
                           fetchPatients();
                         });
                       },
-                      title: Text("${patient['name']['first']} ${patient['name']['last']}"),
+                      title: Text("${patient['name']['first']} ${patient['name']['last']}"), 
                       subtitle: Text('Room: ${patient['room']}'),
-                    ));
+                    ),
+                    )
+                    );
                 //
               },
             ))
