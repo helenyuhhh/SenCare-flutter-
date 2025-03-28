@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:sencare/patientObject.dart';
+import 'package:sencare/testObject.dart';
 
 
 class NetworkingManager {
@@ -177,33 +178,28 @@ static const String baseUrl = 'http://172.16.7.102:3000/api';
     }
   }
   // get test by id  not finished
-  Future<PatientObject> getTestById(String patientId, String testId) async {
+  Future<TestObject> getTestById(String patientId, String testId) async {
     try{
       http.Response response = 
       await http.get(Uri.parse('$baseUrl/patients/$patientId/tests/$testId'));
-
+ // reading, id, date, nurse_name, categoty, id
     if (response.statusCode == 200) {
       var jsonObj = jsonDecode(response.body);
-      var fname = jsonObj['name']['first'] as String;
-      var lname = jsonObj['name']['last'] as String;
-      var age = jsonObj['age'] as int;
-      var gender = jsonObj['gender'] as String;
-      var room = jsonObj['room'] as String;
-      var condition = jsonObj['condition'] as String;
-      var weight = jsonObj['weight'] as String;
-      var height = jsonObj['height'] as String;
+      var category = jsonObj['category'] as String;
+      var readingJson = jsonObj['reading'] as Map<String, dynamic>;
+      var reading = Reading.fromJson(readingJson, category);
       var date = jsonObj['date'] as String;
-      var picture = jsonObj['picture'];
-      return PatientObject(Name(fname, lname), age, gender, room, condition, weight, height, date, picture);
-
+      var nurseName = jsonObj['nurse_name'] as String;
+      var type = jsonObj['type'] as String;
+      var id = jsonObj['id'] as String;
+      return TestObject(reading, patientId, date, nurseName, type, category, id);
     }else {
       throw Exception("Failed to find patient ${response.statusCode}");
       
     }
     }catch(error){
       print('Error searching patient with id: $error');
-      return PatientObject(Name("", ""), 0, "", "", "", "", "", "", "");
-    }
+      return TestObject(Reading(0, 0, 0.0, 0, 0), patientId, "", "", "", "", "");    }
   }
 
 

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:sencare/networkingManager.dart';
+import 'package:sencare/testObject.dart';
 // this screen should be stateless since it only displays the result
 class TestInfo extends StatefulWidget{
   final String testId;
@@ -12,66 +15,40 @@ class TestInfo extends StatefulWidget{
 }
 
 class _TextInfoState extends State<TestInfo> {
+  var testObject = TestObject(Reading(0,0,0.0,0,0), "", "", "", "", "", "");
+  final NetworkingManager _networkingManager = NetworkingManager();
+  Future getTestById(String patientId, String testId) async{
+    testObject = await _networkingManager.getTestById(patientId, testId);
+    print('patientid IN INFO PAGE: ${widget.patientId}');
+    print('testid IN INFO PAGE: ${widget.testId}');
+    print('test category: ${testObject.category}');
+    print('test reading: ${testObject.reading.bloodOxygen}');
+    return testObject;
+  }
   @override
   Widget build(BuildContext context) {
     
     return Scaffold(
       appBar: AppBar(title: const Text('Test Info'),),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
+      body: FutureBuilder(
+          future: getTestById(widget.patientId,widget.testId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Column(
           children: [
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Test Category: ",
+                  "Category: ",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
                 Expanded(
                   // read from passed object
-                  child: Text(
-                    'Sample data',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Value: ",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Expanded(
-                  // read from passed object
-                  child: Text(
-                    // label will be replaced by test name
-                    'Sample data',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Date: ",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Expanded(
-                  // read from passed object
-                  child: Text(
-                    'Sample data',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  child:
+                      Text(testObject.category,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                 ),
               ],
@@ -89,7 +66,7 @@ class _TextInfoState extends State<TestInfo> {
                 Expanded(
                   // read from passed object
                   child: Text(
-                    'Sample data',
+                    testObject.nurseName,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -99,9 +76,42 @@ class _TextInfoState extends State<TestInfo> {
               height: 10,
             ),
             
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  "Date: ",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                ),
+                Expanded(
+                  // read from passed object
+                  child: Text(
+                    testObject.date,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
           ],
+        );
+      
+              
+        } else {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Error loading test data",
+                    style: TextStyle(fontSize: 18, color: Colors.redAccent),)
+                  ],
+                ),
 
-        ),)
+              );
+            } 
+          } ),
     );
   }
 

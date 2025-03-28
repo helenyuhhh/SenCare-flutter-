@@ -61,7 +61,7 @@ class _TextListState extends State<TextListScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => TestInfo(
-                                      testId: personalTests[index]['id'],
+                                      testId: personalTests[index]['_id'],
                                       patientId: widget.patientId)),
                             ).then((_) {});
                           }),

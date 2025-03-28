@@ -56,7 +56,7 @@ class TestObject {
   String type = "";
   String category = "";
   String id = "";
-  TestObject(this.reading, this.patientId, this.date, this.nurseName,
+  TestObject(this.reading, this.patientId, this.date, this.nurseName, this.type,
       this.category, this.id);
 
   factory TestObject.fromJson(Map<String, dynamic> json){
@@ -68,6 +68,7 @@ class TestObject {
      json['patient_id'] ?? "", 
      json['date'] ?? "", 
      json['nurse_name'] ?? "", 
+     json['type'] ?? "",
      category, 
      json['id'] ?? "");
   }
