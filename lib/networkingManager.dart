@@ -202,6 +202,24 @@ static const String baseUrl = 'http://172.16.7.102:3000/api';
       return TestObject(Reading(0, 0, 0.0, 0, 0), patientId, "", "", "", "", "");    }
   }
 
+  Future<void> addTest(String patientId, PatientObject testData) async{
+    try{
+      http.Response response = 
+            await http.post(Uri.parse('$baseUrl/patients/$patientId/tests'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(testData));
+      if (response.statusCode == 201){
+        return jsonDecode(response.body);
+      }
+      else {
+        throw Exception('Failed to create patient: ${response.statusCode}');
+      }
+    }catch(error){
+      print('error creating patient');
+      throw error;
+    }
+  }
+
 
 
 }
