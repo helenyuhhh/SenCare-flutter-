@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:sencare/networkingManager.dart';
@@ -17,6 +18,7 @@ class TestInfo extends StatefulWidget{
 class _TextInfoState extends State<TestInfo> {
   var testObject = TestObject(Reading(0,0,0.0,0,0), "", "", "", "", "", "");
   final NetworkingManager _networkingManager = NetworkingManager();
+  var testName = "";
   Future getTestById(String patientId, String testId) async{
     testObject = await _networkingManager.getTestById(patientId, testId);
     print('patientid IN INFO PAGE: ${widget.patientId}');
@@ -25,6 +27,22 @@ class _TextInfoState extends State<TestInfo> {
     print('test reading: ${testObject.reading.bloodOxygen}');
     return testObject;
   }
+  String _testValue(){
+    switch(testObject.category){
+      case 'Respiratory Rate':
+        return 'Respiratory rate:  ${testObject.reading.respiratory}';
+      case 'Blood Oxygen Level':
+        return 'Blood Oxygen Level:  ${testObject.reading.bloodOxygen}';
+      case 'Blood Pressure':
+        return 'Systolic:  ${testObject.reading.systolic} \nDiastolic:  ${testObject.reading.diastolic}';
+      case 'Heartbeat Rate':
+        return 'Heartbeat Rate:  ${testObject.reading.heartBeat}';
+      default:
+        return "No Data";
+
+    }
+  }
+  // void assignTest(){}
   @override
   Widget build(BuildContext context) {
     
@@ -50,6 +68,18 @@ class _TextInfoState extends State<TestInfo> {
                       Text(testObject.category,
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  _testValue(),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
