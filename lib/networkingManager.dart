@@ -111,13 +111,15 @@ static const String baseUrl = 'http://172.16.7.102:3000/api';
   }
   // change room, age, weight, height
   Future updatePatient(String id,{
-    String? newRoom, int? newAge, String? newWeight, String? newHeight}) async{
+    String? newRoom, int? newAge, String? newWeight, String? newHeight, 
+    String? newCondition}) async{
     try{
       Map<String, dynamic> updatedData = {};
       if (newRoom != null) updatedData['room'] = newRoom;
       if (newAge != null) updatedData['age'] = newAge;
       if (newWeight != null) updatedData['weight'] = newWeight;
       if (newHeight != null) updatedData['height'] = newHeight;
+      if (newCondition != null) updatedData['condition'] = newCondition;
       if (updatedData.isEmpty) {
         print("Nothing to upodate");
         return await getPatientById(id);
@@ -202,7 +204,7 @@ static const String baseUrl = 'http://172.16.7.102:3000/api';
       return TestObject(Reading(0, 0, 0.0, 0, 0), patientId, "", "", "", "", "");    }
   }
 
-  Future<void> addTest(String patientId, PatientObject testData) async{
+  Future<void> addTest(String patientId, TestObject testData) async{
     try{
       http.Response response = 
             await http.post(Uri.parse('$baseUrl/patients/$patientId/tests'),

@@ -196,6 +196,25 @@ class _PatientInfoState extends State<PatientInfo> {
             SizedBox(
               height: 10,
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  "Condition: ",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                ),
+                Expanded(
+                  // read from passed object
+                  child: Text(
+                    patientObject.condition,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
             ElevatedButton(onPressed: () {
               Navigator.push(context,
                       MaterialPageRoute(builder: (context) => TextListScreen(patientId: widget.patientId)));

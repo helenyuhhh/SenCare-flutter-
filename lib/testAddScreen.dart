@@ -163,6 +163,75 @@ class _TestAdd extends State<TestAdd> {
         content: Text(_errorMsg),
         backgroundColor: Colors.red,
       ));
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+      _errorMsg = "";
+    });
+    try {
+      int heartRate = 0;
+      int respiratoryRate = 0;
+      double bloodOxygen = 0.0;
+      int systolic = 0;
+      int diastolic = 0;
+      switch (testType) {
+        case "Heartbeat Rate":
+          heartRate = int.parse(heartBeatController.text);
+          break;
+        case "Respiratory Rate":
+          respiratoryRate = int.parse(resController.text);
+          break;
+        case "Blood Oxygen Level":
+          bloodOxygen = double.parse(bloxyController.text);
+          break;
+        case "Blood Pressure":
+          systolic = int.parse(sysController.text);
+          diastolic = int.parse(diaController.text);
+          break;
+      }
+      final newTest = TestObject(
+          // heartb, res, blox, sys, dia
+          Reading(
+              heartRate,
+              respiratoryRate,
+              bloodOxygen,
+              systolic,
+              diastolic),
+          widget.patientId,
+          testDateTime,
+          nurseController.text,
+          type,
+          testType,
+          "1");
+      await _networkingManager.addTest(widget.patientId, newTest);
+
+      if (_isCritical) {
+        await _networkingManager.updatePatient(widget.patientId,
+            newCondition: "Critical");
+      }
+      else if (!_isCritical) {
+        await _networkingManager.updatePatient(widget.patientId,
+            newCondition: "Normal");
+
+      }
+      
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Patient added successfully ! "),
+        backgroundColor: Colors.green,
+      ));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  TextListScreen(patientId: widget.patientId)));
+    } catch (error) {
+      _errorMsg = "Failed to add test!";
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(_errorMsg),
+        backgroundColor: Colors.red,
+      ));
     }
   }
 
