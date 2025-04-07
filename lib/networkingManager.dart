@@ -219,7 +219,4 @@ static const String baseUrl = 'http://172.16.7.102:3000/api';
       throw error;
     }
   }
-
-
-
 }

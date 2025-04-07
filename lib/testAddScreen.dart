@@ -22,7 +22,7 @@ class TestAdd extends StatefulWidget {
 }
 
 class _TestAdd extends State<TestAdd>{
-  TextEditingController valueController = TextEditingController();// remove later
+  //TextEditingController valueController = TextEditingController();// remove later
   TextEditingController nurseController = TextEditingController();
   TextEditingController sysController = TextEditingController();// sys
   TextEditingController diaController = TextEditingController();// dia
@@ -34,6 +34,7 @@ class _TestAdd extends State<TestAdd>{
   String type = "Test"; // won't be changed
   final NetworkingManager _networkingManager = NetworkingManager();
   bool _isLoading = false;
+  bool _isValidInput = false;
   bool _isCritical = false;
   String _errorMsg = "";
   TestObject newTest = TestObject(Reading(0,0,0.0,0,0), "", "", "", "", "", "");
@@ -49,9 +50,50 @@ class _TestAdd extends State<TestAdd>{
       default:
         return "No Test found";
     }
-
+  }
+  void validOutput(){
+    if(sysController.text.isEmpty|| diaController.text.isEmpty 
+    || heartBeatController.text.isEmpty || sysController.text.isEmpty
+    || diaController.text.isEmpty){
+      setState(() {
+        _isValidInput = false;
+        _errorMsg = "Input value should not be empty!";
+      });
+    }
   }
   // add ui adjust inside build
+  void checkStatus(){
+    if (_isValidInput){
+      int sysValue = int.parse(sysController.text);
+      int diaValue = int.parse(diaController.text);
+      int heartBeatValue = int.parse(heartBeatController.text);
+      int resValue = int.parse(resController.text);
+      int bOXValue = int.parse(bloxyController.text);
+      if (heartBeatValue >100 || heartBeatValue < 60 || resValue > 16 || resValue < 12
+         || bOXValue > 1 || bOXValue < 0.95 ||(sysValue < 120&&diaValue<80)){
+         setState(() {
+         _isCritical = true;
+        });
+      }
+      if (sysValue > 200 || diaValue > 200 || heartBeatValue>200 || resValue > 30
+         ||bOXValue > 1){
+          setState(() {
+            _isValidInput = false;
+            _errorMsg = "Input number too large, please input valid numbers";
+          });
+         }
+    }
+  }
+  Future<void> addNewTest() async{
+    if (!_isValidInput){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_errorMsg),
+        backgroundColor: Colors.red,)
+      );
+
+    }
+
+  }
 
   
   
@@ -121,15 +163,16 @@ class _TestAdd extends State<TestAdd>{
                   ),
                   Expanded(
                     child: TextField(
-                      controller: valueController,
+                      controller: diaController,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(), labelText: 'value'),
                     ),
                   ),
                 ],
               ),
-          ]
-            else ...[
+            ]
+          
+            else if (testType == 'Heartbeat Rate')...[
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -139,15 +182,50 @@ class _TestAdd extends State<TestAdd>{
                   ),
                   Expanded(
                     child: TextField(
-                      controller: valueController,
+                      controller: heartBeatController,
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(), labelText: 'value'),
                     ),
                   ),
                 ],
               ),
-              
-          ],
+            ]
+            else if (testType == 'Respiratory Rate')...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    valueTitle(),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: resController,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(), labelText: 'value'),
+                    ),
+                  ),
+                ],
+              ),
+            ]
+            else if (testType == 'Blood Oxygen Level')...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    valueTitle(),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: bloxyController,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(), labelText: 'value'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
             
               SizedBox(
                 height: 10,
