@@ -20,8 +20,9 @@ class _PatientInfoState extends State<PatientInfo> {
   // final String receiveID;
   // constructor
   // const PatientInfo(this.receiveID, {super.key});
-  
-  var patientObject = PatientObject(Name("", ""), 0, "", "", "", "", "","", "no image");
+
+  var patientObject =
+      PatientObject(Name("", ""), 0, "", "", "", "", "", "", "no image");
 
   final NetworkingManager _networkingManager = NetworkingManager();
   String name = "";
@@ -39,203 +40,226 @@ class _PatientInfoState extends State<PatientInfo> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Patient Info'),
-        
       ),
       body: FutureBuilder(
           future: getPatientById(widget.patientId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return Column(
-          children: [
-             patientObject.picture.isNotEmpty
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(50),
-                            child: Image.network(
-                              patientObject.picture,
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Text("No image");
-                              },
-                            ),
-                          )
-                        : Icon(Icons.person),
-            SizedBox(
-              height: 5,
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(
-                          builder: (context) => EditPatient(patientId: widget.patientId)),
-                        ).then((_){
-                        });
-                  },
-                  icon: Icon(
-                    Icons.edit_square,
-                    size: 35,
-                  )),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Name: ",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Expanded(
-                  // read from passed object
-                  child:
-                      Text(name,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              return RefreshIndicator(onRefresh: ()async => getPatientById(widget.patientId),
+              child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child:
+              Column(
+                children: [
+                  patientObject.picture.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: Image.network(
+                            patientObject.picture,
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Text("No image");
+                            },
+                          ),
+                        )
+                      : Icon(Icons.person),
+                  SizedBox(
+                    height: 5,
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Room: ",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Expanded(
-                  // read from passed object
-                  child: Text(
-                    patientObject.room,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditPatient(patientId: widget.patientId)),
+                          ).then((_) {});
+                        },
+                        icon: Icon(
+                          Icons.edit_square,
+                          size: 35,
+                        )),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Gender: ",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Expanded(
-                  // read from passed object
-                  child: Text(
-                    patientObject.gender,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  SizedBox(
+                    height: 10,
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Age: ",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Expanded(
-                  // read from passed object
-                  child: Text(
-                    patientObject.age.toString(),
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Name: ",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                      Expanded(
+                        // read from passed object
+                        child: Text(
+                          name,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Weight: ",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Expanded(
-                  // read from passed object
-                  child: Text(
-                    patientObject.weight,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  SizedBox(
+                    height: 10,
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Height: ",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Expanded(
-                  // read from passed object
-                  child: Text(
-                    patientObject.height,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Room: ",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                      Expanded(
+                        // read from passed object
+                        child: Text(
+                          patientObject.room,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Condition: ",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
-                Expanded(
-                  // read from passed object
-                  child: Text(
-                    patientObject.condition,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  SizedBox(
+                    height: 10,
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(onPressed: () {
-              Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TextListScreen(patientId: widget.patientId)));
-            }, child: const Text('Tests'))
-          ],
-        );
-      
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Gender: ",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                      Expanded(
+                        // read from passed object
+                        child: Text(
+                          patientObject.gender,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Age: ",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                      Expanded(
+                        // read from passed object
+                        child: Text(
+                          patientObject.age.toString(),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Weight: ",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                      Expanded(
+                        // read from passed object
+                        child: Text(
+                          patientObject.weight,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Height: ",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                      Expanded(
+                        // read from passed object
+                        child: Text(
+                          patientObject.height,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Condition: ",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                      Expanded(
+                        // read from passed object
+                        child: Text(
+                          patientObject.condition,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TextListScreen(
+                                    patientId: widget.patientId)));
+                      },
+                      child: const Text('Tests'))
+                ],
+              ),));
               
-        } else {
+            } else {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Error loading patient data",
-                    style: TextStyle(fontSize: 18, color: Colors.redAccent),)
+                    Text(
+                      "Error loading patient data",
+                      style: TextStyle(fontSize: 18, color: Colors.redAccent),
+                    )
                   ],
                 ),
-
               );
-            } 
-          } ),
+            }
+          }),
     );
   }
 }

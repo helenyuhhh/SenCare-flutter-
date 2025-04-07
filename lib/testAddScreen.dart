@@ -221,11 +221,11 @@ class _TestAdd extends State<TestAdd> {
         content: Text("Patient added successfully ! "),
         backgroundColor: Colors.green,
       ));
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  TextListScreen(patientId: widget.patientId)));
+      // Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //         builder: (context) =>
+      //             TextListScreen(patientId: widget.patientId)));
     } catch (error) {
       _errorMsg = "Failed to add test!";
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
