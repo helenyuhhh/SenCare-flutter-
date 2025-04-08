@@ -82,6 +82,8 @@ class _LoginState extends State<LoginScreen> {
             // textfield for username
             TextField(
               controller: _passwordController,
+              obscureText: true,
+              obscuringCharacter: "*",
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText:'Password' 
