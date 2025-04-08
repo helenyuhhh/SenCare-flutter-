@@ -7,7 +7,6 @@ import 'package:sencare/networkingManager.dart';
 import 'package:sencare/patientSearchDelegate.dart';
 
 // define enum for filter
-enum PatientFilter { critical, normal }
 
 class PatientListScreen extends StatefulWidget {
   // variable to receive the passed username
@@ -25,6 +24,9 @@ class _PatientListState extends State<PatientListScreen> {
   bool _isLoading = true;
   String _errorMessage = '';
   final NetworkingManager _networkingManager = NetworkingManager();
+  final List<String> conditions = ['Critical', 'Normal'];
+  List<String> selectedCondition = [];
+
   
   @override
   void initState() {
@@ -32,8 +34,7 @@ class _PatientListState extends State<PatientListScreen> {
     fetchPatients();
   }
 
-  // a filter set for filter the oatienrs with conditions
-  Set<PatientFilter> filters = <PatientFilter>{};
+  
   // patientList
   List<dynamic> patients = [];
 
@@ -63,6 +64,9 @@ class _PatientListState extends State<PatientListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final filterPatientList = patients.where((filterPatient){
+      return selectedCondition.isEmpty || selectedCondition.contains(filterPatient['condition']);
+    }).toList();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -97,28 +101,26 @@ class _PatientListState extends State<PatientListScreen> {
             // filter to filter the patients
             Wrap(
               spacing: 10.0,
-              children: PatientFilter.values.map((PatientFilter patient) {
-                return FilterChip(
-                    label: Text(patient.name),
-                    selected: filters.contains(patient),
-                    onSelected: (bool selected) {
-                      setState(() {
-                        if (selected) {
-                          filters.add(patient);
-                        } else {
-                          filters.remove(patient);
-                        }
-                      });
-                      // filter function
-                    });
-              }).toList(),
+              children: conditions.map((condition)=>FilterChip(
+                label: Text(condition), 
+                selected: selectedCondition.contains(condition),
+                onSelected: (selected){
+                  setState(() {
+                    if (selected){
+                      selectedCondition.add(condition);
+                    }
+                    else {
+                      selectedCondition.remove(condition);
+                    }
+                  });
+
+                })).toList()
+              
             ),
             const SizedBox(
               height: 10.0,
             ),
-            Text(
-                'Looking for ${filters.map((PatientFilter p) => p.name).join(', ')}'),
-            // patient list
+            
             // swipeable, to edit and delete(should have a alert dialog)
             Expanded(
               child: _isLoading? Center(child: CircularProgressIndicator())
@@ -129,9 +131,9 @@ class _PatientListState extends State<PatientListScreen> {
 
               :RefreshIndicator(onRefresh: ()async => fetchPatients(), 
               child: ListView.builder(
-              itemCount: patients.length,
+              itemCount: filterPatientList.length,
               itemBuilder: (_, int index) {
-                final patient = patients[index];
+                final patient = filterPatientList[index];
                 return Slidable(
                     key: Key(
                       index.toString(),
