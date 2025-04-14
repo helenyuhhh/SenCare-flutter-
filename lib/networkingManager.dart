@@ -11,6 +11,7 @@ class NetworkingManager {
 // home network address: http://172.16.7.102:3000/api
 // school: static const String baseUrl = 'http://10.24.48.115:3000/api';
 static const String baseUrl = 'http://172.16.7.102:3000/api';
+
   // fetch all patients -- PatientListScreen
   Future<List<dynamic>> getAllPatient() async {
     try{
